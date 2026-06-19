@@ -1,0 +1,1 @@
+https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/?date_received_max=2026-06-19&date_received_min=2026-03-19&field=all&format=csv&has_narrative=true&no_aggs=true&size=23894
