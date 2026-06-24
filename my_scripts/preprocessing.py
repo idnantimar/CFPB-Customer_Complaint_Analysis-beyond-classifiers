@@ -25,11 +25,16 @@ def clean_text(Source_file) :
         dtype={"Product":'string',"Sub-product":'string',"Consumer complaint narrative":'string',"Company":'string'},
     ).rename(
         columns={"Date received":"DateReceived", "Sub-product":"SubProduct", "Consumer complaint narrative":"Narrative"}
-    ).dropna(
-        subset=["Product","Narrative"], ignore_index=True
-        # Tag is not manually typed but drop-down options. Blank narratives are already filtered out at the server side. 
-        # Very unlikely to have missing values; the step is only for safety measure.
-    ) 
+    )
+    NA_mask = Data_Narrative[["Product","Narrative"]].isna()
+    print(f'''HasNA('Product','Narrative'):{NA_mask.sum(axis=None)}''')
+    if NA_mask.any(axis=None) : 
+        Data_Narrative = Data_Narrative.dropna(
+            axis=0, subset=["Product","Narrative"], ignore_index=True
+            # Tag is not manually typed but drop-down options. Blank narratives are already filtered out at the server side. 
+            # Very unlikely to have missing values; the step is only for safety measure.
+        ) 
+    else : pass
     Data_Narrative["DateReceived"] = Data_Narrative["DateReceived"].dt.to_period('D') # keep this column, for trend analysis later
     for col in ["Product","SubProduct","Company"] : # 'category' dtype is much more efficient when n_unique<<n 
         Data_Narrative[col] = Data_Narrative[col].str.lower().str.strip().str.replace(r'[^a-z0-9]+','_',regex=True).astype('category')  
