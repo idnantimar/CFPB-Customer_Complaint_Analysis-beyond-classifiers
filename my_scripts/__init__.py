@@ -19,4 +19,4 @@
 """
 
 
-from . import preprocessing
+from . import preprocessing, ClassKeywordExtractor
