@@ -19,4 +19,12 @@
 """
 
 
-from . import preprocessing, ClassKeywordExtractor
+from . import preprocessing,ClassKeywordExtractor
+from ._splitHalf import split_OddEven
+
+
+__all__ = [
+    "preprocessing",
+    "ClassKeywordExtractor",
+    "split_OddEven"
+]
