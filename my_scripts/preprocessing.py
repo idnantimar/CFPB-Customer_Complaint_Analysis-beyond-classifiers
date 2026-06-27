@@ -2,29 +2,44 @@ import pandas as pd
 import ast
 
 
-def clean_text(Source_file) :
+def clean_text(Source_dir) :
     """ 
     Read the raw CFPB data from a given path and return it with cleaned and trimmed data.
 
     INPUT : 
-        Source_file -- file for pandas.read_csv(...)
+        Source_dir -- glob.glob("*.csv") for pandas.read_csv(...)
 
     RETURN : 
         Data_Narrative -- pandas.DataFrame 
-            "DateReceived":'period[D]' | "Product":'category' | "SubProduct":'category' | "Narrative":'string' | "Company":'category'
+            "DateReceived":'period[D]' | "Product":'category' | "SubProduct":'category' | "Issue":'category' | "SubIssue":'category' | "Narrative":'string' | "Company":'category' | "Response":'category'  | "Complaint ID":'string'
+            Sorted in ascending order of "DateReceived"
         MASK_Names -- set object containing MASK names applied over Narrative
         
     INPLACE MODIFY :
         <NA>
     
     """
-    Data_Narrative = pd.read_csv(Source_file,
-        header=0, index_col=False, 
-        usecols=["Date received","Product","Sub-product","Consumer complaint narrative","Company"],
-        parse_dates=["Date received"], # timestamp is system generated ISO8601, no need to clean it up.
-        dtype={"Product":'string',"Sub-product":'string',"Consumer complaint narrative":'string',"Company":'string'},
+    Data_Narrative = pd.concat(
+        [
+            pd.read_csv(file,
+                header=0, index_col=False, dtype='string',
+                usecols=[
+                    "Date received","Complaint ID",
+                    "Product","Sub-product","Issue","Sub-issue",
+                    "Consumer complaint narrative",
+                    "Company","Company response to consumer"
+                ],
+                parse_dates=["Date received"], # timestamp is system generated ISO8601, no need to clean it up.
+            ) for file in Source_dir 
+        ], axis=0, ignore_index=True
     ).rename(
-        columns={"Date received":"DateReceived", "Sub-product":"SubProduct", "Consumer complaint narrative":"Narrative"}
+        columns={
+            "Date received":"DateReceived", 
+            "Complaint ID":"ComplaintID",
+            "Sub-product":"SubProduct", "Sub-issue":"SubIssue",
+            "Consumer complaint narrative":"Narrative",
+            "Company response to consumer":"Response"
+        }
     )
     NA_mask = Data_Narrative[["Product","Narrative"]].isna()
     print(f'''HasNA('Product','Narrative'):{NA_mask.sum(axis=None)}''')
@@ -33,10 +48,10 @@ def clean_text(Source_file) :
             axis=0, subset=["Product","Narrative"], ignore_index=True
             # Tag is not manually typed but drop-down options. Blank narratives are already filtered out at the server side. 
             # Very unlikely to have missing values; the step is only for safety measure.
-        ) 
+        )
     else : pass
-    Data_Narrative["DateReceived"] = Data_Narrative["DateReceived"].dt.to_period('D') # keep this column, for trend analysis later
-    for col in ["Product","SubProduct","Company"] : # 'category' dtype is much more efficient when n_unique<<n 
+    Data_Narrative["DateReceived"] = Data_Narrative["DateReceived"].dt.to_period('D') 
+    for col in ["Product","SubProduct","Issue","SubIssue","Company","Response"] : # 'category' dtype is much more efficient when n_unique<<n 
         Data_Narrative[col] = Data_Narrative[col].str.lower().str.strip().str.replace(r'[^a-z0-9]+','_',regex=True).astype('category')  
     s = Data_Narrative["Narrative"].str.strip()
     # noticed a small fraction of records storing byte-string b"..." as literal string in the source csv
@@ -60,10 +75,8 @@ def clean_text(Source_file) :
         regex=True
     )
     Data_Narrative["Narrative"] = s
+    Data_Narrative["ComplaintID"] = Data_Narrative["ComplaintID"].str.strip()
+    Data_Narrative = Data_Narrative.sort_values(by="DateReceived",ignore_index=True) # sorted data by date
 
     return Data_Narrative,MASK_Names
 
-
-
-if __name__=='__main__' : 
-    pass

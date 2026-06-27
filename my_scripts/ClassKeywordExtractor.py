@@ -164,5 +164,3 @@ class TopK_cTFIDF(BaseEstimator) :
 
 
 
-if __name__=='__main__' : 
-    pass
