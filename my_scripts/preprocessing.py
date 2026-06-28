@@ -79,4 +79,3 @@ def clean_text(Source_dir) :
     Data_Narrative = Data_Narrative.sort_values(by="DateReceived",ignore_index=True) # sorted data by date
 
     return Data_Narrative,MASK_Names
-
