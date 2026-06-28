@@ -19,12 +19,12 @@
 """
 
 
-from . import preprocessing,ClassKeywordExtractor
-from ._splitHalf import split_OddEven
+from . import miscllaneous,preprocessing,ClassKeywordExtractor
+
 
 
 __all__ = [
     "preprocessing",
     "ClassKeywordExtractor",
-    "split_OddEven"
+    "miscllaneous"
 ]
