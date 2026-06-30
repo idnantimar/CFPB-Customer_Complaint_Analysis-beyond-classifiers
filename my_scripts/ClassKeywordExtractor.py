@@ -40,7 +40,7 @@ class Top_n_cTFIDF(BaseEstimator) :
                 The lower and upper boundary of the range of n-values for different word n-grams.
 
     [ 
-        Several implementation-specific hyperparameters are intentionally hidden to keep the public API concise. 
+        Several implementation-specific hyperparameters are intentionally hidden to prevent unintended modifications. 
         Refer to the source code for advanced customization. 
     ]
 

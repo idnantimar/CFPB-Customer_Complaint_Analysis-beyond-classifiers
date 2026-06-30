@@ -19,12 +19,12 @@
 """
 
 
-from . import miscllaneous,preprocessing,ClassKeywordExtractor
+from . import utils,preprocessing,ClassKeywordExtractor
 
 
 
 __all__ = [
     "preprocessing",
     "ClassKeywordExtractor",
-    "miscllaneous"
+    "utils"
 ]
