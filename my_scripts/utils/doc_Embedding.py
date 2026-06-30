@@ -9,7 +9,7 @@ MODEL_NAME = 'BAAI/bge-base-en-v1.5'
 DEVICE = 'cuda'
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-WINDOW_SIZE = tokenizer.model_max_length - tokenizer.num_special_tokens_to_add(pair=False)
+WINDOW_SIZE = tokenizer.model_max_length - 2 
 OVERLAP = 32 
 STRIDE = WINDOW_SIZE - OVERLAP
 model = AutoModel.from_pretrained(MODEL_NAME)
@@ -19,7 +19,7 @@ EMBEDDING_DIM = model.config.hidden_size
 
 
 @torch.inference_mode()
-def Embedding__bge_base(X:pd.Series,batch_size:int=32) -> np.ndarray :
+def Embedding__bge_base(X:pd.Series,*,batch_size:int=32) -> np.ndarray :
     """
     This wrapper function helps us to keep the heavy sentence embedding layer separate from BERTopic topic modeling,
     and reuse same embedding matrix across multiple models.
@@ -73,11 +73,7 @@ def Embedding__bge_base(X:pd.Series,batch_size:int=32) -> np.ndarray :
                 # while chunking a specific document, 
                 # store its doc_id for future reference
                 chunk_weights.append(len(chunk)) 
-                chunk_tokens.append(
-                    {
-                        "input_ids":tokenizer.build_inputs_with_special_tokens(chunk)
-                    } # add [CLS],[SEP] 
-                )
+                chunk_tokens.append({"input_ids":[tokenizer.cls_token_id,*chunk,tokenizer.sep_token_id]})
                 if token_idx+WINDOW_SIZE < doc_len : 
                     token_idx += STRIDE
                 else : break
