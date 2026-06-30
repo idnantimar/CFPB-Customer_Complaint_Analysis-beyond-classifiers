@@ -41,7 +41,7 @@ def spaCy_cleaner(S:pd.Series,*,stop_words:Iterable=None,exclude_pos:Iterable=No
         <NA>
     
     """
-    docs = nlp.pipe(S.fillna("").to_list(),**nlp_kwargs)
+    docs = nlp.pipe(S.fillna('').to_list(),**nlp_kwargs)
     stop_words_ = {str(_).strip().lower() for _ in stop_words} if stop_words is not None else set()
     exclude_pos = set(exclude_pos) if exclude_pos is not None else {'X','SYM','SPACE','EOL'}
     exclude_tag = set(exclude_tag) if exclude_tag is not None else {}
