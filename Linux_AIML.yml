@@ -13,6 +13,7 @@ dependencies:
   - debugpy=1.8.21
   - decorator=5.3.1
   - executing=2.2.1
+  - iniconfig=2.3.0
   - ipykernel=7.2.0
   - ipython=9.15.0
   - ipython_pygments_lexers=1.1.1
@@ -41,6 +42,7 @@ dependencies:
   - pexpect=4.9.0
   - pip=26.1.2
   - platformdirs=4.9.4
+  - pluggy=1.6.0
   - prompt-toolkit=3.0.52
   - prompt_toolkit=3.0.52
   - psutil=7.2.2
@@ -48,6 +50,7 @@ dependencies:
   - ptyprocess=0.7.0
   - pure_eval=0.2.3
   - pygments=2.20.0
+  - pytest=9.0.3
   - python=3.12.13
   - python-dateutil=2.9.0post0
   - pyzmq=27.1.0
