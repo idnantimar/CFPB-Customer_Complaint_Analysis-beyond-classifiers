@@ -24,7 +24,7 @@ from dateutil.relativedelta import relativedelta
 import urllib.request
 import random
 
-range_start = date(2026,01,1)
+range_start = date(2026,1,1)
 n_months = 6
 
 
